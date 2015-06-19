@@ -96,7 +96,7 @@ get_firmware_filenames()	# output is without complete path, only the files in 'b
 {
 	local hardware="${1:-$( cat KALUA_HARDWARE )}"
 	local arch="$( get_arch )"
-	local config_file="$REPONAME/openwrt-config/config_HARDWARE.${hardware}.txt"
+	local config_file="../openwrt-config/config_HARDWARE.${hardware}.txt"
 	local found="false"
 	local filetype file
 
@@ -154,7 +154,7 @@ set_build()
 {
 	local mode="$1"			# e.g. mini|standard|full
 	local line symbol file wish config
-	local dir="$REPONAME/openwrt-config"
+	local dir="../openwrt-config"
 	local hardware
 
 	case "$mode" in
@@ -176,7 +176,7 @@ set_build()
 			return 1
 		;;
 		"patch:"*)
-			[ -e "$REPONAME/openwrt-patches/$( echo "$mode" | cut -d':' -f2 )" ] || {
+			[ -e "../openwrt-patches/$( echo "$mode" | cut -d':' -f2 )" ] || {
 				log "patch '$mode' does not exists"
 				return 1
 			}
@@ -202,7 +202,7 @@ set_build()
 
 	case "$mode" in
 		"patch:"*)
-			file="$REPONAME/openwrt-patches/$( echo "$mode" | cut -d':' -f2 )"
+			file="../openwrt-patches/$( echo "$mode" | cut -d':' -f2 )"
 			local line dest old_pwd file2patch
 
 			read line <"$file"	# diff --git a/package/uhttpd/src/uhttpd-tls.c b/package/uhttpd/src/uhttpd-tls.c
@@ -281,7 +281,7 @@ set_build()
 			file="/dev/null"
 		;;
 		*)
-			dir="$REPONAME/openwrt-config"
+			dir="../openwrt-config"
 			config=".config"
 
 			[ -e "$config" ] || {
@@ -545,17 +545,17 @@ build_kalua_update_tarball()
 	echo "or simply extract with: $extract"
 	echo
 	echo "or copy the config-apply-script with:"
-        echo "scp $USER@$( mypubip ):$( pwd )/$REPONAME/openwrt-build/apply_profile.code /etc/init.d"	
+        echo "scp $USER@$( mypubip ):$( pwd )/openwrt-build/apply_profile.code /etc/init.d"	
 }
 
 config2git()
 {
 	local hardware destfile arch dir
-	local strip="$REPONAME/openwrt-config/hardware/strip_config.sh"
+	local strip="../openwrt-config/hardware/strip_config.sh"
 	read hardware <KALUA_HARDWARE
 	
 
-	destfile="$REPONAME/openwrt-config/hardware/$hardware/openwrt.config"
+	destfile="$../openwrt-config/hardware/$hardware/openwrt.config"
 	cp -v .config "$destfile"
 	$strip "$destfile"
 
@@ -719,116 +719,12 @@ mypubip()
 	wget -qO - http://intercity-vpn.de/scripts/getip/
 }
 
-applymystuff()
-{
-	local installation="$1"
-	local sub_profile="$2"
-	local node="$3"
-
-	local base="package/base-files/files"
-	local file destfile hash url private_settings
-	local pwd="$( pwd )"
-
-	log "generating version-information - /etc/variables_fff+"
-	generate_version_file >"$base/etc/variables_fff+"
-
-	file="$REPONAME/openwrt-build/apply_profile"
-	log "copy $( basename "$file" ) - the master controller ($( filesize "$file" ) bytes)"
-	cp "$file" "$base/etc/init.d"
-	chmod +x "$base/etc/init.d/$( basename "$file" )"
-
-	file="$REPONAME/openwrt-build/apply_profile.watch"
-	log "copy $( basename "$file" ) - controller_watcher ($( filesize "$file" ) bytes)"
-	cp "$file" "$base/etc/init.d"
-	chmod +x "$base/etc/init.d/$( basename "$file" )"
-
-	file="$REPONAME/openwrt-build/apply_profile.code"
-	destfile="$base/etc/init.d/apply_profile.code"
-	log "copy $( basename "$file" ) - the configurator ($( filesize "$file" ) bytes)"
-	cp "$file" "$destfile"
-	chmod +x "$base/etc/init.d/$( basename "$file" )"
-
-	if [ -n "$node" ]; then
-		log "changing values in '$destfile'"
-		sed -i "s/^#SIM_ARG1=/SIM_ARG1=$installation    #/" "$destfile"
-		sed -i "s/^#SIM_ARG2=/SIM_ARG2=$sub_profile    #/" "$destfile"
-		sed -i "s/^#SIM_ARG3=/SIM_ARG3=$node    #/" "$destfile"
-
-		local startline
-		startline="$( grep -n ^"# enforcing a profile" "$destfile" | cut -d':' -f1 )"
-		startline="$(( $startline + 9 ))"
-		head -n $startline "$destfile" | tail -n 13
-	else
-		log "selected generic profile"
-	fi
-
-	private_settings="../../apply_profile.code.definitions"
-	[ -e "$private_settings" ] || private_settings="/tmp/apply_profile.code.definitions"
-
-	file="$private_settings"
-	if [ -e "$file" ]; then
-		log "copy '$file' - your network descriptions ($( filesize "$file" ) bytes)"
-		cp "$file" "$base/etc/init.d"
-
-		# extract defaults
-		sed -n '/^case/,/^	\*)/p' "$REPONAME/openwrt-build/$file" | sed -e '1d' -e '$d' >"/tmp/defs_$$"
-		# insert defaults into file
-		sed -i '/^case/ r /tmp/defs' "$base/etc/init.d/$file"
-		rm "/tmp/defs_$$"
-
-		log "copy '$file' - your network descriptions (inserted defaults also) ($( filesize "$base/etc/init.d/$file" ) bytes)"
-	else
-		file="$REPONAME/openwrt-build/$( basename $file )"
-		log "copy '$file' - your network descriptions ($( filesize "$file" ) bytes)"
-		cp "$file" "$base/etc/init.d"
-	fi
-
-	file="$REPONAME/openwrt-patches/regulatory.bin"
-	log "copy $( basename "$file" )  - easy bird grilling included ($( filesize "$file" ) bytes)"
-	cp "$file" "$base/etc/init.d/apply_profile.regulatory.bin"
-
-	[ -e "package/mac80211/files/regdb.txt" ] && {
-		file="$REPONAME/openwrt-patches/regulatory.db.txt"
-		log "found package/mac80211/files/regdb.txt - overwriting"
-		cp "$file" "package/mac80211/files/regdb.txt"
-	}
-
-	log "copy all_the_scripts/addons - the weimarnetz-project itself ($( du -sh $REPONAME/openwrt-addons ))"
-	cd $REPONAME/openwrt-addons
-	cp -pR * "../../$base"
-
-	cd "$pwd"
-
-	file="$base/etc/HARDWARE"
-	log "writing target-hardware in image '$file', to known ourselves even without klog/dmesg"
-	echo "$( get_hardware | sed 's/:/\//g' )" >"$file"
-
-	file="$base/etc/tarball_last_applied_hash"
-
-	while [ -z "$hash" ]; do {
-		url="http://intercity-vpn.de/firmware/$( get_arch )/images/testing/info.txt"
-		log "fetching $url"
-		hash="$( wget -qO - "$url" |
-			  fgrep "tarball.tgz" |
-			   cut -d' ' -f2
-			)"
-
-		[ -z "$hash" ] && {
-			log "[ERR] retry in 5 sec, could not fetch '$url'"
-			sleep 5
-		}
-	} done
-
-	log "writing tarball-hash '$hash' into image (fooling the builtin-update-checker)"
-	echo -n "$hash" >"$file"
-}
-
 set_build_openwrtconfig()
 {
 	local config_dir file hardware
 
 	read hardware <KALUA_HARDWARE
-	config_dir="$REPONAME/openwrt-config/hardware/$( select_hardware_model "$hardware" )"
+	config_dir="../openwrt-config/hardware/$( select_hardware_model "$hardware" )"
 	file="$config_dir/openwrt.config"
 	log "applying openwrt/packages-configuration to .config ($( filesize "$file" ) bytes)"
 	cp "$file" .config
@@ -842,7 +738,7 @@ set_build_kernelconfig()
 	local architecture kernel_config_dir kernel_config_file file config_dir hardware
 
 	read hardware <KALUA_HARDWARE
-	config_dir="$REPONAME/openwrt-config/hardware/$( select_hardware_model "$hardware" )"
+	config_dir="../openwrt-config/hardware/$( select_hardware_model "$hardware" )"
 	architecture="$( get_arch )"
 
 	kernel_config_dir="$( kernel_dir )"
@@ -1020,17 +916,6 @@ gitpull()
 	git pull
 
 	log "updated to openwrt-version: $( scripts/getver.sh )"
-}
-
-initial_settings()	# prepares the openwrt clone for our needs, should only run one time before compiling the first time
-{
-	cd $REPONAME/openwrt-build
-	cp -pv vtun-Makefile ../../feeds/packages/net/vtun/Makefile
-        #remove dependency manually
-	#cp -pv profile-100-Broadcom-b43.mk ../../target/linux/brcm47xx/profiles/100-Broadcom-b43.mk
-        cp -pv rc.local ../../package/base-files/files/etc/rc.local
-	cp -pv pre-commit ../.git/hooks/pre-commit
-        echo "vm.swappiness=100" >> ../../package/base-files/files/etc/sysctl.conf
 }
 
 case "$ACTION" in
