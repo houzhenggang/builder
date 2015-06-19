@@ -77,8 +77,8 @@ clone()
        }
 	fi
 	
-	if [ -e "../../$REPONAME/openwrt-config/git_revs" ] && [ $TRUNK = 0 ]; then
-		. "../../$REPONAME/openwrt-config/git_revs"
+	if [ -e "./openwrt-config/git_revs" ] && [ $TRUNK = 0 ]; then
+		. "./openwrt-config/git_revs"
 		case "$repo" in
 			*"openwrt"*)
 				[ -n "$MY_OPENWRT" ] && {
@@ -122,7 +122,7 @@ mymake()	# fixme! how to ahve a quiet 'make defconfig'?
 }
 
 prepare_build()		# check possible values via:
-{			# $REPONAME/openwrt-build/mybuild.sh set_build list
+{			# ./openwrt-build/mybuild.sh set_build list
 	local action
 
 	case "$@" in
@@ -150,7 +150,7 @@ prepare_build()		# check possible values via:
 			;;
 		esac
 
-		"$REPONAME/openwrt-build/mybuild.sh" set_build "$action"
+		"./openwrt-build/mybuild.sh" set_build "$action"
 		log "[READY] invoking: '$action' from '$@'"
 	} done
 }
@@ -185,12 +185,12 @@ else
 fi
 changedir openwrt
 
-clone "$REPOURL"
+# clone "$REPOURL"
 #copy feeds.conf to openwrt directory
 if [ "$TRUNK" = "bb1407" ]; then
-	cp "$REPONAME/openwrt-build/feeds.conf.1407" ./feeds.conf
+	cp "./openwrt-build/feeds.conf.1407" ./feeds.conf
 else
-	cp "$REPONAME/openwrt-build/feeds.conf" ./
+	cp "./openwrt-build/feeds.conf" ./
 fi
 
 prepare_build "reset_config"
@@ -206,8 +206,7 @@ for SPECIAL in unoptimized kcmdlinetweak; do {
 	esac
 } done
 
-#$REPONAME/openwrt-build/mybuild.sh applymystuff
-"$REPONAME/openwrt-build/mybuild.sh" make
+"./openwrt-build/mybuild.sh" make
 print_revisions
 
 log "please removing everything via 'rm -fR release' if you are ready"
