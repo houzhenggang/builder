@@ -24,10 +24,9 @@ log()
 }
 
 if [ -z "$REPONAME" ] || [ -z "$REPOURL" ]; then
-        log "please set the variables \$REPONAME and \$REPOURL to appropriate values, e. g. \"weimarnetz\" for REPONAME and \"git://github.com/weimarnetz/weimarnetz.git\" for REPOURL"
+        log "please set the variables \$REPONAME and \$REPOURL to appropriate values, e. g. \"weimarnetz\" for REPONAME and \"git://github.com/weimarnetz/weimarnetz.git\" for REPOURL if you want to build kalua from your own repo"
         log "\$REPONAME is the name of the directory where you checked out the repository \$REPOURL"
         echo ""
-        exit 1
 fi
 
 TRUNK=0
@@ -92,17 +91,17 @@ clone()
 					changedir ..
 				}
 			;;
-			*"packages"*)
-				[ -n "$MY_PACKAGES" ] && {
-					changedir "$dir"
-					git branch -D "r$MY_PACKAGES"
-					git checkout "$( git log -z | tr '\n\0' ' \n' | grep "@$MY_PACKAGES" | cut -d' ' -f2 )" -b r$MY_PACKAGES || {
-                       log "error during git checkout" 
-                       exit 1
-                   }
-					changedir ..
-				}
-			;;
+#			*"packages"*)
+#				[ -n "$MY_PACKAGES" ] && {
+#					changedir "$dir"
+#					git branch -D "r$MY_PACKAGES"
+#					git checkout "$( git log -z | tr '\n\0' ' \n' | grep "@$MY_PACKAGES" | cut -d' ' -f2 )" -b r$MY_PACKAGES || {
+#                       log "error during git checkout" 
+#                       exit 1
+#                   }
+#					changedir ..
+#				}
+#			;;
 		esac
 	fi
 }
@@ -172,18 +171,17 @@ show_args()
 	} done
 }
 
-[ -e "/tmp/apply_profile.code.definitions" ] || {
-	log "please make sure, that you have placed you settings in '/tmp/apply_profile.code.definitions'"
-	log "otherwise i'll take the community-settings"
-	sleep 5
-}
+#[ -e "/tmp/apply_profile.code.definitions" ] || {
+#	log "please make sure, that you have placed you settings in '/tmp/apply_profile.code.definitions'"
+#	log "otherwise i'll take the community-settings"
+#	sleep 5
+#}
 
 changedir release
 if [ "$TRUNK" = "bb1407" ]; then
 	clone "git://git.openwrt.org/14.07/openwrt.git" "$TRUNK"
 else
 	clone "git://nbd.name/openwrt.git" "$TRUNK"
-	clone "git://nbd.name/packages.git" "$TRUNK"
 fi
 changedir openwrt
 
