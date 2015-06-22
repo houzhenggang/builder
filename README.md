@@ -23,7 +23,7 @@ You need to choose exactly one hardware and use it as the first argument prefixe
 
 If you build OpenWrt or Weimarnetz firmware for the first time on your computer, you need to install some software before: 
 	
-  # be root user
+	# be root user
 	apt-get update
 	LIST="build-essential libncurses5-dev m4 flex git git-core zlib1g-dev unzip subversion gawk python libssl-dev quilt screen"
 	for PACKAGE in $LIST; do apt-get -y install $PACKAGE; done
@@ -36,7 +36,7 @@ Those steps describe how to build images for all ar71xx based devices:
 * change to directory builder
 * run ```./build_release.sh <options>``` where options can be
  * a meta package like ```i./build_release.sh meta.ffweimar-4MB```
- * a complete build line ```./build_release.sh ffweimar_standard patch:901-minstrel-try-all-rates.patch patch:luci-remove-freifunk-firewall.patch patch:openwrt-remove-ppp-firewall-from-deps.patch patch:openwrt-remove-wpad-mini-from-deps.patch ffweimar_luci_standard hostapd vtunnoZlibnoSSL i18n_german https owm shrink tc```
+ * a complete build line ```./build_release.sh ffweimar_standard patch:901-minstrel-try-all-rates.patch patch:luci-remove-freifunk-firewall.patch ffweimar_luci_standard hostapd vtunnoZlibnoSSL i18n_german https owm shrink tc busybox busybox_swap use_trunk```
 * both line will have the same result
 * you'll find images in ```openwrt/bin/ar71xx/```
 
