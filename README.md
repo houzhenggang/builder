@@ -30,6 +30,8 @@ If you build OpenWrt or Weimarnetz firmware for the first time on your computer,
 
 ### Build steps
 
+Those steps describe how to build images for all ar71xx based devices:
+
 * clone this repository: ```git clone https://github.com/weimarnetz/builder.git```
 * change to directory builder
 * run ```./build_release.sh <options>``` where options can be
@@ -88,13 +90,3 @@ vtunnoZlibnoSSL | vpn client configured to connect to our vpn servers
 use_trunk | build latest openwrt trunk instead of revisions written in openwrt-config/git_revs. add this option at the end of your line.
 use_bb1407 | build from trunk ofbarrier breaker 14.07 final repo instead of revisions written in openwrt-config/git_revs from dev repos. add this option at the end of your line.
 
-In the following box you'll find an example that builds our default image for weimarnetz routers based on ar71xx hardware. Simply call it step by step. Sometimes the build process will be interrupted. Mostly it's not an error, but some packages or dependencies of openwrt could not be downloaded. Try the last line again, if that happens. You could also debug that error by changing the directory to ```release/openwrt``` and call ```make V=s```.
-
-	# login as non-root user
-	export REPONAME="weimarnetz" && export REPOURL="git://github.com/weimarnetz/weimarnetz.git"
-	git clone $REPOURL
-	mkdir myrelease; cd myrelease
-	DO="../$REPONAME/openwrt-build/build_release.sh"
-
-	# choose your router-model and build, for example:
-	#build all ar71xx based hardware images with barrier breaker 14.07 final
