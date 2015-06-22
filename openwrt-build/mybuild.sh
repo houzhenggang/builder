@@ -36,7 +36,7 @@ if [ -z "$REPONAME" ] || [ -z "$REPOURL" ]; then
 	echo "\$REPONAME is the name of the directory where you checked out the repository \$REPOURL"
 	echo ""
 	show_help
-	exit 1
+	#exit 1
 fi
 
 case "$ACTION" in

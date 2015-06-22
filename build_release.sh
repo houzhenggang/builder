@@ -77,8 +77,8 @@ clone()
        }
 	fi
 	
-	if [ -e "./openwrt-config/git_revs" ] && [ $TRUNK = 0 ]; then
-		. "./openwrt-config/git_revs"
+	if [ -e "../openwrt-config/git_revs" ] && [ $TRUNK = 0 ]; then
+		. "../openwrt-config/git_revs"
 		case "$repo" in
 			*"openwrt"*)
 				[ -n "$MY_OPENWRT" ] && {
@@ -150,7 +150,7 @@ prepare_build()		# check possible values via:
 			;;
 		esac
 
-		"./openwrt-build/mybuild.sh" set_build "$action"
+		"../openwrt-build/mybuild.sh" set_build "$action"
 		log "[READY] invoking: '$action' from '$@'"
 	} done
 }
@@ -177,7 +177,7 @@ show_args()
 #	sleep 5
 #}
 
-changedir release
+# changedir release
 if [ "$TRUNK" = "bb1407" ]; then
 	clone "git://git.openwrt.org/14.07/openwrt.git" "$TRUNK"
 else
@@ -188,9 +188,9 @@ changedir openwrt
 # clone "$REPOURL"
 #copy feeds.conf to openwrt directory
 if [ "$TRUNK" = "bb1407" ]; then
-	cp "./openwrt-build/feeds.conf.1407" ./feeds.conf
+	cp "../openwrt-build/feeds.conf.1407" ./feeds.conf
 else
-	cp "./openwrt-build/feeds.conf" ./
+	cp "../openwrt-build/feeds.conf" ./
 fi
 
 prepare_build "reset_config"
@@ -206,7 +206,7 @@ for SPECIAL in unoptimized kcmdlinetweak; do {
 	esac
 } done
 
-"./openwrt-build/mybuild.sh" make
+"../openwrt-build/mybuild.sh" make
 print_revisions
 
 log "please removing everything via 'rm -fR release' if you are ready"
