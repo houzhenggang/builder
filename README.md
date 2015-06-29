@@ -86,6 +86,7 @@ imagesbuilder | creates the imagebuilder file that is used for meshkit installat
 options | creates a lot of modules that won't be included to the image by default. you can find these packages in bin/_arch_/packages
 owm | installs openwifimap client to support http://map.weimarnetz.de
 shrink | removes debug symbols to save space
+switch | adds tools for advanced switch config (e.g. ethtool, mii-tool)
 tc | adds traffic control, i.e. to optimize olsr links
 vtunnoZlibnoSSL | vpn client configured to connect to our vpn servers
 use_trunk | build latest openwrt trunk instead of revisions written in openwrt-config/git_revs. add this option at the end of your line.
