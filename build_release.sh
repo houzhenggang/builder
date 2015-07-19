@@ -184,7 +184,7 @@ show_args()
 # changedir release
 if [ "$TRUNK" = "bb1407" ]; then
 	clone "git://git.openwrt.org/14.07/openwrt.git" "$TRUNK"
-else if [ "$TRUNK" = "cc1505" ]; then
+elif [ "$TRUNK" = "cc1505" ]; then
 	clone "git://git.openwrt.org/15.05/openwrt.git" "$TRUNK"
 else
 	clone "git://nbd.name/openwrt.git" "$TRUNK"
@@ -195,7 +195,7 @@ changedir openwrt
 #copy feeds.conf to openwrt directory
 if [ "$TRUNK" = "bb1407" ]; then
 	cp "../openwrt-build/feeds.conf.1407" ./feeds.conf
-else if [ "$TRUNK" = "cc1505" ]; then
+elif [ "$TRUNK" = "cc1505" ]; then
 	cp "../openwrt-build/feeds.conf.1505" ./feeds.conf
 else
 	cp "../openwrt-build/feeds.conf" ./
