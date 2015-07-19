@@ -40,6 +40,10 @@ case "$@" in
 		log "we will use the 14.07 barrier breaker stable version"
 		TRUNK=bb1407
 	;;
+	*"use_cc1505"*)
+		log "we will use the 15.05 chaos calmer stable version"
+		TRUNK=cc1505
+	;;
 esac
 
 
@@ -180,6 +184,8 @@ show_args()
 # changedir release
 if [ "$TRUNK" = "bb1407" ]; then
 	clone "git://git.openwrt.org/14.07/openwrt.git" "$TRUNK"
+else if [ "$TRUNK" = "cc1505" ]; then
+	clone "git://git.openwrt.org/15.05/openwrt.git" "$TRUNK"
 else
 	clone "git://nbd.name/openwrt.git" "$TRUNK"
 fi
@@ -189,6 +195,8 @@ changedir openwrt
 #copy feeds.conf to openwrt directory
 if [ "$TRUNK" = "bb1407" ]; then
 	cp "../openwrt-build/feeds.conf.1407" ./feeds.conf
+else if [ "$TRUNK" = "cc1505" ]; then
+	cp "../openwrt-build/feeds.conf.1505" ./feeds.conf
 else
 	cp "../openwrt-build/feeds.conf" ./
 fi
