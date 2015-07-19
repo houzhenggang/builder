@@ -90,5 +90,6 @@ switch | adds tools for advanced switch config (e.g. ethtool, mii-tool)
 tc | adds traffic control, i.e. to optimize olsr links
 vtunnoZlibnoSSL | vpn client configured to connect to our vpn servers
 use_trunk | build latest openwrt trunk instead of revisions written in openwrt-config/git_revs. add this option at the end of your line.
-use_bb1407 | build from trunk ofbarrier breaker 14.07 final repo instead of revisions written in openwrt-config/git_revs from dev repos. add this option at the end of your line.
+use_bb1407 | build from trunk of barrier breaker 14.07 final repo instead of revisions written in openwrt-config/git_revs from dev repos. add this option at the end of your line.
+use_cc1505 | build from trunk of chaos calmer 15.05 final repo instead of revisions written in openwrt-config/git_revs from dev repos. add this option at the end of your line.
 
