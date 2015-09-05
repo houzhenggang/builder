@@ -1,1 +1,1 @@
-ffweimar_standard patch:luci-remove-freifunk-firewall.patch ffweimar_luci_standard hostapd vtunnoZlibnoSSL i18n_german https owm shrink tc busybox busybox_swap
+ffweimar_standard patch:luci-remove-freifunk-firewall.patch ffweimar_luci_standard hostapd vtunnoZlibnoSSL i18n_german nohttps owm shrink tc busybox busybox_swap
