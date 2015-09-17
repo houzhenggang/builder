@@ -29,8 +29,6 @@ if [ -z "$REPONAME" ] || [ -z "$REPOURL" ]; then
         echo ""
 fi
 
-ARGS= 
-
 resolve_meta() {
     while [ $# -gt 0 ] 
     do
@@ -47,10 +45,9 @@ resolve_meta() {
    done
 }
 
-resolve_meta "$@"
-log "configuring with:\n $ARGS"
-
-TRUNK=1
+ ARGS="$@"
+ resolve_meta "$ARGS"
+ log "used options: $ARGS"
 
 case "$ARGS" in
 	*"use_trunk"*)
