@@ -235,7 +235,7 @@ for SPECIAL in unoptimized kcmdlinetweak; do {
 	esac
 } done
 
-"../openwrt-build/mybuild.sh" make $ARGS
+"../openwrt-build/mybuild.sh" make 
 print_revisions
 
 log "please removing everything via 'rm -fR release' if you are ready"
