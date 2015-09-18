@@ -31,13 +31,13 @@ Hint:   for building multiple config-enforced images use e.g.:
 EOF
 }
 
-if [ -z "$REPONAME" ] || [ -z "$REPOURL" ]; then
-	echo "please set the variables \$REPONAME and \$REPOURL to appropriate values, e. g. \"weimarnetz\" for REPONAME and \"git://github.com/weimarnetz/weimarnetz.git\" for REPOURL"
-	echo "\$REPONAME is the name of the directory where you checked out the repository \$REPOURL"
-	echo ""
-	show_help
-	#exit 1
-fi
+#if [ -z "$REPONAME" ] || [ -z "$REPOURL" ]; then
+#	echo "please set the variables \$REPONAME and \$REPOURL to appropriate values, e. g. \"weimarnetz\" for REPONAME and \"git://github.com/weimarnetz/weimarnetz.git\" for REPOURL"
+#	echo "\$REPONAME is the name of the directory where you checked out the repository \$REPOURL"
+#	echo ""
+#	show_help
+#	#exit 1
+#fi
 
 case "$ACTION" in
 	"")
@@ -49,11 +49,11 @@ case "$ACTION" in
 	;;
 esac
 
-[ -d $REPONAME ] || {
-	echo "please make sure, that your working directory is in the openwrt-base dir"
-	echo "i want to see the directorys 'package', 'scripts' and '$REPONAME'"
-	exit 1
-}
+#[ -d $REPONAME ] || {
+#	echo "please make sure, that your working directory is in the openwrt-base dir"
+#	echo "i want to see the directorys 'package', 'scripts' and '$REPONAME'"
+#	exit 1
+#}
 
 log()
 {
