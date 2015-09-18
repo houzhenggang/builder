@@ -10,7 +10,7 @@
 
 log()
 {
-	logger -s "$( date ): [$( pwd )]: $0: $1"
+    logger -s "$( date +"%F %R" ): [$( basename $(pwd) )]: $0: $1"
 }
 
 [ -z "$1" ] && {
@@ -23,11 +23,10 @@ log()
 	exit 1
 }
 
-if [ -z "$REPONAME" ] || [ -z "$REPOURL" ]; then
-        log "please set the variables \$REPONAME and \$REPOURL to appropriate values, e. g. \"weimarnetz\" for REPONAME and \"git://github.com/weimarnetz/weimarnetz.git\" for REPOURL if you want to build kalua from your own repo"
-        log "\$REPONAME is the name of the directory where you checked out the repository \$REPOURL"
-        echo ""
-fi
+[ -x "./openwrt-build/mybuild.sh" ] || {
+    log "please run the script in the current directory!"
+    exit 1
+}
 
 resolve_meta() {
     while [ $# -gt 0 ] 
@@ -45,20 +44,22 @@ resolve_meta() {
    done
 }
 
- ARGS="$@"
- resolve_meta "$ARGS"
- log "used options: $ARGS"
+ARGS="$@"
+resolve_meta "$ARGS"
+log "used options: $ARGS"
+
+TRUNK=1
 
 case "$ARGS" in
-	*"use_trunk"*)
+	*use_trunk*)
 		log "we will be on top of openwrt development"
 		TRUNK=1
 	;;
-	*"use_bb1407"*)
+	*use_bb1407*)
 		log "we will use the 14.07 barrier breaker stable version"
 		TRUNK=bb1407
 	;;
-	*"use_cc1505"*)
+	*use_cc1505*)
 		log "we will use the 15.05 chaos calmer stable version"
 		TRUNK=cc1505
 	;;
@@ -93,7 +94,7 @@ clone()
 		changedir ..
 	else
 		log "git-cloning from '$repo'"
-		git clone "$repo" || { 
+		git clone --depth=1 "$repo" || { 
            log "error cloning repo" 
            exit 1
        }
@@ -147,14 +148,9 @@ prepare_build()		# check possible values via:
 {			# ./openwrt-build/mybuild.sh set_build list
 	local action
 
-	case "$ARGS" in
-		*" "*)
-			log "list: '$ARGS'"
-		;;
-	esac
-
-	for action in "$ARGS"; do {
-		log "[START] invoking: '$action' from '$ARGS'"
+    log "$@"
+	for action in $@; do {
+		log "[START] invoking: '$action' from '$@'"
 
 		case "$action" in
 			r[0-9]|r[0-9][0-9]|r[0-9][0-9][0-9]|r[0-9][0-9][0-9][0-9]|r[0-9][0-9][0-9][0-9][0-9])
@@ -167,13 +163,14 @@ prepare_build()		# check possible values via:
             }
 				continue
 			;;
-			*"use_"*)
+			*use_*)
 				continue
 			;;
 		esac
 
+        log "[DEBUG] running mybuild.sh set_build $action"
 		"../openwrt-build/mybuild.sh" set_build "$action"
-		log "[READY] invoking: '$action' from '$ARGS'"
+		log "[READY] invoking: '$action' from '$@'"
 	} done
 }
 
@@ -181,7 +178,7 @@ show_args()
 {
 	local word
 
-	for word in "$ARGS"; do {
+	for word in "$@"; do {
 		case "$word" in
 			*" "*)
 				echo -n " '$word'"
@@ -237,4 +234,3 @@ print_revisions
 
 log "please removing everything via 'rm -fR release' if you are ready"
 log "# buildstring: $( show_args "$ARGS" )"
-
