@@ -29,9 +29,27 @@ if [ -z "$REPONAME" ] || [ -z "$REPOURL" ]; then
         echo ""
 fi
 
-TRUNK=0
+resolve_meta() {
+    while [ $# -gt 0 ] 
+    do
+        case "$1" in
+            *meta.* )
+               read NEW_ARGS < "./openwrt-config/config_${1}.txt"
+               ARGS=$(echo $ARGS $NEW_ARGS | sed "s/$1//g")
+               resolve_meta $ARGS
+               ;;
+            * )
+               ;;
+       esac
+       shift
+   done
+}
 
-case "$@" in
+ ARGS="$@"
+ resolve_meta "$ARGS"
+ log "used options: $ARGS"
+
+case "$ARGS" in
 	*"use_trunk"*)
 		log "we will be on top of openwrt development"
 		TRUNK=1
@@ -129,14 +147,14 @@ prepare_build()		# check possible values via:
 {			# ./openwrt-build/mybuild.sh set_build list
 	local action
 
-	case "$@" in
+	case "$ARGS" in
 		*" "*)
-			log "list: '$@'"
+			log "list: '$ARGS'"
 		;;
 	esac
 
-	for action in "$@"; do {
-		log "[START] invoking: '$action' from '$@'"
+	for action in "$ARGS"; do {
+		log "[START] invoking: '$action' from '$ARGS'"
 
 		case "$action" in
 			r[0-9]|r[0-9][0-9]|r[0-9][0-9][0-9]|r[0-9][0-9][0-9][0-9]|r[0-9][0-9][0-9][0-9][0-9])
@@ -155,7 +173,7 @@ prepare_build()		# check possible values via:
 		esac
 
 		"../openwrt-build/mybuild.sh" set_build "$action"
-		log "[READY] invoking: '$action' from '$@'"
+		log "[READY] invoking: '$action' from '$ARGS'"
 	} done
 }
 
@@ -163,7 +181,7 @@ show_args()
 {
 	local word
 
-	for word in "$@"; do {
+	for word in "$ARGS"; do {
 		case "$word" in
 			*" "*)
 				echo -n " '$word'"
@@ -203,20 +221,20 @@ fi
 
 prepare_build "reset_config"
 mymake package/symlinks
-prepare_build "$@"
+prepare_build "$ARGS"
 mymake defconfig
 
 for SPECIAL in unoptimized kcmdlinetweak; do {
-	case "$@" in
+	case "$ARGS" in
 		*"$SPECIAL"*)
 			prepare_build $SPECIAL
 		;;
 	esac
 } done
 
-"../openwrt-build/mybuild.sh" make
+"../openwrt-build/mybuild.sh" make 
 print_revisions
 
 log "please removing everything via 'rm -fR release' if you are ready"
-log "# buildstring: $( show_args "$@" )"
+log "# buildstring: $( show_args "$ARGS" )"
 
