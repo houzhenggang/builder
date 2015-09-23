@@ -35,19 +35,18 @@ resolve_meta() {
             *meta.* )
                read NEW_ARGS < "./openwrt-config/config_${1}.txt"
                ARGS=$(echo "$ARGS" "$NEW_ARGS" | sed "s/$1//g")
-               resolve_meta "$ARGS"
+               resolve_meta $ARGS
                ;;
             * )
+               ARGS="$ARGS $1"
                ;;
        esac
        shift
    done
 }
 
-# no quoting for reliable field splitting 
-# fixme: not sure if this the best way
-ARGS=$*
-resolve_meta "$ARGS"
+ARGS=
+resolve_meta "$@"
 log "used options: $ARGS"
 
 TRUNK=1
@@ -220,7 +219,7 @@ fi
 
 prepare_build "reset_config"
 mymake package/symlinks
-prepare_build "$ARGS"
+prepare_build $ARGS
 mymake defconfig
 
 for SPECIAL in unoptimized kcmdlinetweak; do {
