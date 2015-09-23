@@ -10,7 +10,7 @@
 
 log()
 {
-    logger -s "$( date +"%F %R" ): [$( basename $(pwd) )]: $0: $1"
+    logger -s "$( date +"%F %R" ): [$( basename "$(pwd)" )]: $0: $1"
 }
 
 [ -z "$1" ] && {
@@ -34,8 +34,8 @@ resolve_meta() {
         case "$1" in
             *meta.* )
                read NEW_ARGS < "./openwrt-config/config_${1}.txt"
-               ARGS=$(echo $ARGS $NEW_ARGS | sed "s/$1//g")
-               resolve_meta $ARGS
+               ARGS=$(echo "$ARGS" "$NEW_ARGS" | sed "s/$1//g")
+               resolve_meta "$ARGS"
                ;;
             * )
                ;;
@@ -44,7 +44,9 @@ resolve_meta() {
    done
 }
 
-ARGS="$@"
+# no quoting for reliable field splitting 
+# fixme: not sure if this the best way
+ARGS=$*
 resolve_meta "$ARGS"
 log "used options: $ARGS"
 
@@ -107,7 +109,7 @@ clone()
 				[ -n "$MY_OPENWRT" ] && {
 					changedir "$dir"
 					git branch -D "r$MY_OPENWRT"
-					git checkout "$( git log -z | tr '\n\0' ' \n' | grep "@$MY_OPENWRT " | cut -d' ' -f2 )" -b r$MY_OPENWRT || {
+					git checkout "$( git log -z | tr '\n\0' ' \n' | grep "@$MY_OPENWRT " | cut -d' ' -f2 )" -b r"$MY_OPENWRT" || {
                        log "error during git checkout"
                        exit 1
                     }
@@ -133,7 +135,7 @@ clone()
 print_revisions()
 {
 	OPENWRT_REV="$( ./scripts/getver.sh )"
-	KALUA_REV="$(  cat package/base-files/files/etc/variables_fff+ |grep FFF_PLUS|tr -d '[:space:]'|cut -d '=' -f 2|cut -d '#' -f 1)"	
+	KALUA_REV="$(  grep FFF_PLUS package/base-files/files/etc/variables_fff+ | tr -d '[:space:]'|cut -d '=' -f 2|cut -d '#' -f 1)"	
 	echo "{\"OPENWRT_REV\":\"$OPENWRT_REV\",\"KALUA_REV\":\"$KALUA_REV\"}" > "bin/revisions.json"
 }
 
@@ -149,15 +151,15 @@ prepare_build()		# check possible values via:
 	local action
 
     log "$@"
-	for action in $@; do {
-		log "[START] invoking: '$action' from '$@'"
+	for action in "$@"; do {
+		log "[START] invoking: '$action' from '$*'"
 
 		case "$action" in
 			r[0-9]|r[0-9][0-9]|r[0-9][0-9][0-9]|r[0-9][0-9][0-9][0-9]|r[0-9][0-9][0-9][0-9][0-9])
 				REV="$( echo "$action" | cut -d'r' -f2 )"
 				log "switching to revision r$REV"
 				git stash
-				git checkout "$( git log -z | tr '\n\0' ' \n' | grep "@$REV " | cut -d' ' -f2 )" -b r$REV || {
+				git checkout "$( git log -z | tr '\n\0' ' \n' | grep "@$REV " | cut -d' ' -f2 )" -b r"$REV" || {
                 log "error while git checkout" 
                 exit 1
             }
@@ -170,7 +172,7 @@ prepare_build()		# check possible values via:
 
         log "[DEBUG] running mybuild.sh set_build $action"
 		"../openwrt-build/mybuild.sh" set_build "$action"
-		log "[READY] invoking: '$action' from '$@'"
+		log "[READY] invoking: '$action' from '$*'"
 	} done
 }
 
