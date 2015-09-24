@@ -1,5 +1,5 @@
---- feeds/luci/modules/luci-mod-freifunk/Makefile.old 2015-06-07 10:41:37.522529443 +0200
-+++ feeds/luci/modules/luci-mod-freifunk/Makefile 2015-06-07 10:41:50.522495712 +0200
+--- a/feeds/luci/modules/luci-mod-freifunk/Makefile.old 2015-06-07 10:41:37.522529443 +0200
++++ b/feeds/luci/modules/luci-mod-freifunk/Makefile 2015-06-07 10:41:50.522495712 +0200
 @@ -7,7 +7,7 @@
  include $(TOPDIR)/rules.mk
  
