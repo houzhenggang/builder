@@ -1,0 +1,39 @@
+From 1b7067cbe669a4102683cd4d7f3e130a6b73e9f8 Mon Sep 17 00:00:00 2001
+From: mt <martin.tippmann@gmail.com>
+Date: Thu, 24 Sep 2015 00:08:31 +0200
+Subject: [PATCH] um: handle GCC 5.x like GCC 4.x
+
+Compiler compatibility macros were conditionally defined based on
+the compiler version. The it tested __GNUC__, but compared it to
+a maximum value of 4, breaking compilation on now current GCC 5.x.
+Thus, the check is extended to check for version 4.x and beyond.
+
+Signed-off-by: Hans-Werner Hilse <hwhilse@gmail.com>
+
+[Taken from http://sourceforge.net/p/user-mode-linux/mailman/message/34139609/ and adapted for OpenWRT]
+Signed-off-by: Martin Tippmann <martin.tippmann@gmail.com>
+---
+ target/linux/uml/patches-3.18/190-gcc5-fix.patch | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ create mode 100644 target/linux/uml/patches-3.18/190-gcc5-fix.patch
+
+diff --git a/target/linux/uml/patches-3.18/190-gcc5-fix.patch b/target/linux/uml/patches-3.18/190-gcc5-fix.patch
+new file mode 100644
+index 0000000..ed8e476
+--- /dev/null
++++ b/target/linux/uml/patches-3.18/190-gcc5-fix.patch
+@@ -0,0 +1,11 @@
++--- a/arch/um/include/shared/init.h
+++++ b/arch/um/include/shared/init.h
++@@ -54,7 +54,7 @@ typedef void (*exitcall_t)(void);
++ #endif
++ 
++ #else
++-#if __GNUC__ == 4
+++#if __GNUC__ >= 4
++ # define __used			__attribute__((__used__))
++ #endif
++ #endif
+-- 
+2.5.0
+
