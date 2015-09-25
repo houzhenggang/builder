@@ -159,8 +159,9 @@ set_build()
 
 	case "$mode" in
 		reset_config)
-			rm ".config"
+			rm -f ".config"
 			file="/dev/null"
+            return 0
 		;;
 		unoptimized)		# https://forum.openwrt.org/viewtopic.php?id=30141
 			sed -i 's/-Os //' ".config"
@@ -175,7 +176,7 @@ set_build()
 			ls -1 $dir/config_* | sed 's/^.*config_\(.*\).txt$/\1/'
 			return 1
 		;;
-		"patch:"*)
+		patch:*)
 			[ -e "../openwrt-patches/$( echo "$mode" | cut -d':' -f2 )" ] || {
 				log "patch '$mode' does not exists"
 				return 1
@@ -201,54 +202,10 @@ set_build()
 	esac
 
 	case "$mode" in
-		"patch:"*)
+		patch:*)
 			file="../openwrt-patches/$( echo "$mode" | cut -d':' -f2 )"
-			local line dest old_pwd file2patch
-
-			read line <"$file"	# diff --git a/package/uhttpd/src/uhttpd-tls.c b/package/uhttpd/src/uhttpd-tls.c
-			case "$line" in
-				*"include/net/mac80211.h"|*"net/mac80211/rc80211_minstrel_ht.c"|*"net/wireless/b43/dma.c")
-					dest="package/mac80211/patches"
-				;;
-				*"uhttpd/src/"*)
-					# e.g. uhttpd-tls.c
-					dest="package/network/services/uhttpd/src/"
-					old_pwd="$( pwd )"
-					file2patch="$( basename "$( echo "$line" | cut -d' ' -f3 )" )"
-					cd $dest
-
-					patch -N f1 f2 
-
-					cd $old_pwd
-				;;
-                                *)
-                                        # general, patches created with "diff -up <orig file> <patched file> > patchfile"
-					# assumption: patch root dir is in openwrt directory
-					# extract 2nd line from patch file
-					line=$( head -n 2 $file|tail -n 1 )
-                                        file2patch="$( echo "$line" | cut -d' ' -f2 |cut -f1 )"
-					dest="$( dirname $file2patch )"
-
-                                        patch -N $file2patch $file
-
-                                ;;
-
-			esac
-
-			mkdir -p "$dest"
-			log "we are here: '$( pwd )' - cp '$file' '$dest'"
-			cp -v "$file" "$dest"
-
-			file="/dev/null"
-		;;
-		meta*)
-			local thismode mode_list
-			read mode_list <"$file"
-
-			for thismode in $mode_list; do {
-				log "applying meta-content: $thismode"
-				set_build "$thismode"
-			} done
+            git apply -v "$file"
+            return $? 
 		;;
 		kernel*)
 			config="$( kernel_dir )/.config"
@@ -374,6 +331,7 @@ set_build()
 		log "parsing next argument: '$1'"
 		set_build "$@"
 	}
+    return 0
 }
 
 filesize()
@@ -865,26 +823,6 @@ apply_tarball_regdb_and_applyprofile()
 	esac
 
 	cd "$pwdold"
-
-	case "$( get_arch )" in
-		ar71xx)
-			case "$installation" in
-				rehungen*|liszt28*)
-					scp $pre:$remote_dir/openwrt-patches/999-ath9k-register-reading.patch package/mac80211/patches
-				;;
-				*)
-					[ -e "package/mac80211/patches/999-ath9k-register-reading.patch" ] && {
-						rm "package/mac80211/patches/999-ath9k-register-reading.patch"
-					}
-				;;
-			esac
-		;;
-		*)
-			[ -e "package/mac80211/patches/999-ath9k-register-reading.patch" ] && {
-				rm "package/mac80211/patches/999-ath9k-register-reading.patch"
-			}
-		;;
-	esac
 }
 
 svnrev2githash()

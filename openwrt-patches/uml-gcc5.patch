@@ -27,7 +27,7 @@ index 0000000..ed8e476
 ++++ b/arch/um/include/shared/init.h
 +@@ -54,7 +54,7 @@ typedef void (*exitcall_t)(void);
 + #endif
-+ 
++
 + #else
 +-#if __GNUC__ == 4
 ++#if __GNUC__ >= 4
@@ -36,4 +36,3 @@ index 0000000..ed8e476
 + #endif
 -- 
 2.5.0
-

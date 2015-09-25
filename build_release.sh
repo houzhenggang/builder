@@ -38,30 +38,29 @@ resolve_meta() {
                resolve_meta $ARGS
                ;;
             * )
-               ARGS="$ARGS $1"
                ;;
        esac
        shift
    done
 }
 
-ARGS=
-resolve_meta "$@"
-log "used options: $ARGS"
+ARGS="$@"
+resolve_meta $ARGS
+log "[INFO] used options: $ARGS"
 
 TRUNK=1
 
 case "$ARGS" in
 	*use_trunk*)
-		log "we will be on top of openwrt development"
+		log "[INFO] we will be on top of openwrt development"
 		TRUNK=1
 	;;
 	*use_bb1407*)
-		log "we will use the 14.07 barrier breaker stable version"
+		log "[INFO] we will use the 14.07 barrier breaker stable version"
 		TRUNK=bb1407
 	;;
 	*use_cc1505*)
-		log "we will use the 15.05 chaos calmer stable version"
+		log "[INFO] we will use the 15.05 chaos calmer stable version"
 		TRUNK=cc1505
 	;;
 esac
@@ -151,7 +150,7 @@ prepare_build()		# check possible values via:
 
     log "$@"
 	for action in "$@"; do {
-		log "[START] invoking: '$action' from '$*'"
+		log "[START] '$action' from '$*'"
 
 		case "$action" in
 			r[0-9]|r[0-9][0-9]|r[0-9][0-9][0-9]|r[0-9][0-9][0-9][0-9]|r[0-9][0-9][0-9][0-9][0-9])
@@ -169,9 +168,11 @@ prepare_build()		# check possible values via:
 			;;
 		esac
 
-        log "[DEBUG] running mybuild.sh set_build $action"
-		"../openwrt-build/mybuild.sh" set_build "$action"
-		log "[READY] invoking: '$action' from '$*'"
+		"../openwrt-build/mybuild.sh" set_build "$action" || {
+            log "[ERROR] $action failed. aborting"
+            exit 1
+        }
+		log "[READY] '$action' from '$*'"
 	} done
 }
 
@@ -217,10 +218,10 @@ else
 	cp "../openwrt-build/feeds.conf" ./
 fi
 
-prepare_build "reset_config"
-mymake package/symlinks
-prepare_build $ARGS
-mymake defconfig
+prepare_build "reset_config" || exit 1
+mymake package/symlinks || exit 1
+prepare_build $ARGS || exit 1
+mymake defconfig || exit 1
 
 for SPECIAL in unoptimized kcmdlinetweak; do {
 	case "$ARGS" in
@@ -230,7 +231,7 @@ for SPECIAL in unoptimized kcmdlinetweak; do {
 	esac
 } done
 
-"../openwrt-build/mybuild.sh" make 
+"../openwrt-build/mybuild.sh" make || exit 1 
 print_revisions
 
 log "please removing everything via 'rm -fR release' if you are ready"
