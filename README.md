@@ -36,7 +36,7 @@ Those steps describe how to build images for all ar71xx based devices:
 * change to directory builder
 * run ```./build_release.sh <options>``` where options can be
  * a meta package like ```i./build_release.sh meta.ffweimar-4MBtrunk```
- * a complete build line ```./build_release.sh ffweimar_standard patch:901-minstrel-try-all-rates.patch patch:luci-remove-freifunk-firewall.patch ffweimar_luci_standard hostapd vtunnoZlibnoSSL i18n_german https owm shrink tc busybox busybox_swap use_trunk```
+ * a complete build line ```./build_release.sh ffweimar_standard patch:luci-remove-freifunk-firewall.patch ffweimar_luci_standard hostapd vtunnoZlibnoSSL i18n_german https owm shrink tc busybox busybox_swap use_trunk```
 * both line will have the same result
 * you'll find images in ```openwrt/bin/ar71xx/```
 
@@ -46,7 +46,7 @@ meta packages (see references to hardware, patches and features below):
 
 meta package | comment
 ------------ | -------
-meta.ffweimar-4MB | contains ffweimar_standard, patch:901-minstrel-try-all-rates.patch, patch:luci-remove-freifunk-firewall.patch, ffweimar_luci_standard, hostapd, vtunnoZlibnoSSL, i18n_german, https, owm, shrink, tc, busybox, busybox
+meta.ffweimar-4MB | contains ffweimar_standard, patch:luci-remove-freifunk-firewall.patch, ffweimar_luci_standard, hostapd, vtunnoZlibnoSSL, i18n_german, https, owm, shrink, tc, busybox, busybox
 meta.ffweimar-4MBtrunk | contains meta.ffweimar-4MB, use_trunk
 meta.ffweimar-4MB-ChaosCalmer | contains meta.ffweimar-4MB, use_cc1505
 meta.ffweimar-meshkit | contains meta.ffweimar-4MB, imagebuilder, options
