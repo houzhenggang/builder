@@ -12,8 +12,8 @@ how to get a release for a specific hardware
 --------------------------------------------
 To build weimarnetz images on your own, you need some preparation steps and one line together with some options for hardware, features and packages. The commands are shown below.
 
-All config options reside in openwrt-config/ and consist of fragments of openwrt config files or patch scripts you need to modify some files. You can add your own config file,hardware files must be named ```config_HARDWARE.NAME.txt```, features names are ```config_NAME.txt```.
-Patch files must be saved in openwrt-patches/ and their name should descripe what they do.
+All config options reside in `openwrt-config/` and consist of fragments of openwrt config files or patch scripts we need to modify some files. You can add your own config files , hardware files must be named ```config_HARDWARE.NAME.txt```, features names are ```config_NAME.txt```.
+Patch files must be saved in `openwrt-patches/` and their name should descripe what they do. Patch file need to be compatible with OpenWRT. For instructions look [here](https://wiki.openwrt.org/doc/devel/patches)
 
 With meta files we can group hardware bundles, patches and feature packs to use cases. They are named ```config_meta.NAME.txt```.
 
@@ -30,12 +30,12 @@ If you build OpenWrt or Weimarnetz firmware for the first time on your computer,
 
 ### Build steps
 
-Those steps describe how to build images for all ar71xx based devices:
+These steps describe how to build images for all ar71xx based devices:
 
 * clone this repository: ```git clone https://github.com/weimarnetz/builder.git```
 * change to directory builder
 * run ```./build_release.sh <options>``` where options can be
- * a meta package like ```i./build_release.sh meta.ffweimar-4MBtrunk```
+ * a meta package like ```./build_release.sh meta.ffweimar-4MBtrunk```
  * a complete build line ```./build_release.sh ffweimar_standard patch:luci-remove-freifunk-firewall.patch ffweimar_luci_standard hostapd vtunnoZlibnoSSL i18n_german https owm shrink tc busybox busybox_swap use_trunk```
 * both line will have the same result
 * you'll find images in ```openwrt/bin/ar71xx/```
@@ -59,7 +59,7 @@ ar71xx | build all ar71xx based hardware (recommanded)
 TP-LINK TLWR841ND | build TP-Link WR841N/ND images
 Ubiquiti Bullet M | build Ubiquity images, mostly suitable for Bullets and Nanostations
 
-Sometimes we need to patch some errors, because the won't be fixed that fast in openwrt or our requirements differ from the default approach. A patch in a commandline starts with ```patch:``` followed by the file name.
+Sometimes we need to patch some errors, because the won't be fixed that fast in OpenWRT or our requirements differ from the default approach. A patch in a commandline starts with ```patch:``` followed by the file name.
 
 patches:
 
