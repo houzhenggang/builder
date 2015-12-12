@@ -1,0 +1,41 @@
+From 5993e1a35362f05ae75126deca77c4fa311dfd67 Mon Sep 17 00:00:00 2001
+From: andibraeu <ab@andi95.de>
+Date: Sat, 12 Dec 2015 12:34:56 +0100
+Subject: [PATCH] backport profile.d support from DD
+
+---
+ package/base-files/files/etc/profile | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/package/base-files/files/etc/profile b/package/base-files/files/etc/profile
+index 3dd58e1..8a55fec 100644
+--- a/package/base-files/files/etc/profile
++++ b/package/base-files/files/etc/profile
+@@ -1,8 +1,12 @@
+ #!/bin/sh
+ [ -f /etc/banner ] && cat /etc/banner
+ [ -e /tmp/.failsafe ] && cat /etc/banner.failsafe
++fgrep -sq '/ overlay ro,' /proc/mounts && {
++	echo 'Your JFFS2-partition seems full and overlayfs is mounted read-only.'
++	echo 'Please try to remove files from /overlay/upper/... and reboot!'
++}
+ 
+-export PATH=/usr/bin:/usr/sbin:/bin:/sbin
++export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+ export HOME=$(grep -e "^${USER:-root}:" /etc/passwd | cut -d ":" -f 6)
+ export HOME=${HOME:-/root}
+ export PS1='\u@\h:\w\$ '
+@@ -14,3 +18,10 @@ export PS1='\u@\h:\w\$ '
+ 
+ [ -x /usr/bin/arp ] || arp() { cat /proc/net/arp; }
+ [ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
++
++[ -n "$FAILSAFE" ] || {
++	for FILE in /etc/profile.d/*.sh; do
++		[ -e "$FILE" ] && . "$FILE"
++	done
++	unset FILE
++}
+-- 
+2.6.2
+
