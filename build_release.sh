@@ -48,12 +48,12 @@ ARGS="$@"
 resolve_meta $ARGS
 log "[INFO] used options: $ARGS"
 
-TRUNK=1
+TRUNK=trunk
 
 case "$ARGS" in
 	*use_trunk*)
 		log "[INFO] we will be on top of openwrt development"
-		TRUNK=1
+		TRUNK=trunk
 	;;
 	*use_bb1407*)
 		log "[INFO] we will use the 14.07 barrier breaker stable version"
@@ -83,10 +83,15 @@ clone()
 	local dir="$( basename "$repo" | cut -d'.' -f1 )"
 
 	if [ -d "$dir" ]; then
+        read OPENWRT_RELEASE < "$dir/.openwrt_version"
+        [ "$OPENWRT_RELEASE" = "$TRUNK" ] || {
+            log "Error: OpenWRT version mismatch: $OPENWRT_RELEASE already cloned but $TRUNK requested" 
+            log "Delete folder '$dir' and try again!"
+            exit 1
+        }
 		log "git-cloning of '$repo' already done, just pulling"
 		changedir "$dir"
 		git stash
-		git checkout master
 		git pull || {
             log "error pulling repo"
             exit 1
@@ -98,6 +103,7 @@ clone()
            log "error cloning repo" 
            exit 1
        }
+       echo "$TRUNK" > "$dir/.openwrt_version"
 	fi
 	
 	if [ -e "../openwrt-config/git_revs" ] && [ $TRUNK = 0 ]; then
@@ -166,6 +172,11 @@ prepare_build()		# check possible values via:
 			*use_*)
 				continue
 			;;
+            reset_config)
+                ./scripts/feeds clean
+                git checkout master 
+                git branch -D patched 
+                git checkout -b patched master
 		esac
 
 		"../openwrt-build/mybuild.sh" set_build "$action" || {
