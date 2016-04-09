@@ -1,0 +1,1 @@
+meta.ffweimar-4MB-ChaosCalmer HARDWARE.ArcherC7 patch:0008-ath10k-firmware-add-Candela-Technologies-firmware-for-QCA988X.patch patch:0009-mac80211-ath10k-allow-simultaneous-AP-IBSS.patch
