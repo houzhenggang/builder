@@ -1,0 +1,3 @@
+CONFIG_TARGET_ar71xx_generic_Default is not set
+CONFIG_TARGET_ar71xx_generic_ARCHERC7=y
+CONFIG_DEFAULT_kmod-ath10k=y

@@ -1,1 +1,1 @@
-patch:0002-backport-profile.d-support.patch patch:luci-remove-freifunk-firewall.patch ffweimar_luci_standard hostapd vtunnoZlibnoSSL i18n_german nohttps owm shrink tc busybox busybox_swap
+patch:luci-remove-freifunk-firewall.patch ffweimar_luci_standard hostapd vtunnoZlibnoSSL i18n_german nohttps owm shrink tc busybox busybox_swap
