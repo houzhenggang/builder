@@ -51,6 +51,10 @@ log "[INFO] used options: $ARGS"
 TRUNK=trunk
 
 case "$ARGS" in
+        *use_lede*)
+	         log "[INFO] we use lede-project.org" 
+		 TRUNK=lede
+	;;
 	*use_trunk*)
 		log "[INFO] we will be on top of openwrt development"
 		TRUNK=trunk
@@ -99,7 +103,7 @@ clone()
 		changedir ..
 	else
 		log "git-cloning from '$repo'"
-		git clone --depth=1 "$repo" || { 
+		git clone --depth=1 "$repo" openwrt || { 
            log "error cloning repo" 
            exit 1
        }
@@ -214,6 +218,8 @@ if [ "$TRUNK" = "bb1407" ]; then
 	clone "git://git.openwrt.org/14.07/openwrt.git" "$TRUNK"
 elif [ "$TRUNK" = "cc1505" ]; then
 	clone "git://git.openwrt.org/15.05/openwrt.git" "$TRUNK"
+elif [ "$TRUNK" = "lede" ]; then
+        clone "https://github.com/lede-project/source.git" "$TRUNK"
 else
 	clone "git://nbd.name/openwrt.git" "$TRUNK"
 fi

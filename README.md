@@ -48,6 +48,7 @@ meta package | comment
 ------------ | -------
 meta.ffweimar-4MB | contains ffweimar_standard, patch:luci-remove-freifunk-firewall.patch, ffweimar_luci_standard, hostapd, vtunnoZlibnoSSL, i18n_german, https, owm, shrink, tc, busybox, busybox
 meta.ffweimar-4MBtrunk | contains meta.ffweimar-4MB, use_trunk
+meta.ffweimar-4MBlede | contains meta.ffweimar-4MB, use_lede
 meta.ffweimar-4MB-ChaosCalmer | contains meta.ffweimar-4MB, use_cc1505
 meta.ffweimar-meshkit | contains meta.ffweimar-4MB, imagebuilder, options
 
