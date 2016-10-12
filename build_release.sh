@@ -215,7 +215,7 @@ if [ "$TRUNK" = "bb1407" ]; then
 elif [ "$TRUNK" = "cc1505" ]; then
 	clone "git://git.openwrt.org/15.05/openwrt.git" "$TRUNK"
 else
-	clone "git://nbd.name/openwrt.git" "$TRUNK"
+	clone "git://git.openwrt.org/openwrt.git" "$TRUNK"
 fi
 changedir openwrt
 
