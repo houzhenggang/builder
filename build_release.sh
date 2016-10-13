@@ -221,7 +221,7 @@ elif [ "$TRUNK" = "cc1505" ]; then
 elif [ "$TRUNK" = "lede" ]; then
         clone "https://github.com/lede-project/source.git" "$TRUNK"
 else
-	clone "git://nbd.name/openwrt.git" "$TRUNK"
+	clone "git://git.openwrt.org/openwrt.git" "$TRUNK"
 fi
 changedir openwrt
 
